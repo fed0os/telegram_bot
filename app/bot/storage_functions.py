@@ -17,6 +17,8 @@ def show_storage_table(tel_bol: TeleBot, call):
     markup = telebot.types.InlineKeyboardMarkup()
     markup.add(telebot.types.InlineKeyboardButton('Наш склад', callback_data='our storage'))
     markup.add(telebot.types.InlineKeyboardButton('Димы склад', callback_data='dima storage'))
+    markup.add(telebot.types.InlineKeyboardButton('Положить на склад', callback_data='products produced'))
+
 
     tel_bol.send_message(call.message.chat.id, 'Выберите пункт', reply_markup=markup)
 
@@ -57,6 +59,19 @@ def show_dima_storage(tel_bot: TeleBot, call, cursor):
             LEFT JOIN 
                 Sales s ON dw.ProductId = s.ProductId and s.CustomerId = 4
             GROUP BY 
-                p.Name;"""
+                p.Name
+                ORDER BY 
+                CASE p.Name
+                    WHEN 'ММ' THEN 1
+                    WHEN 'МБ' THEN 2
+                    WHEN 'М КР' THEN 3
+                    WHEN 'МБН' THEN 4
+                    WHEN 'П' THEN 5
+                    WHEN 'В' THEN 6
+                    WHEN 'ЧН' THEN 7
+                    WHEN 'ЧОР' THEN 8
+                    WHEN 'ЧНБ' THEN 9
+                    ELSE 10
+                END"""
 
     show_information(query, cursor, tel_bot, call)
