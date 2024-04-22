@@ -5,7 +5,6 @@ def show_storage_table(tel_bol: TeleBot, call):
     markup = telebot.types.InlineKeyboardMarkup()
     markup.add(telebot.types.InlineKeyboardButton('Наш склад', callback_data='our storage'))
     markup.add(telebot.types.InlineKeyboardButton('Димы склад', callback_data='dima storage'))
-    markup.add(telebot.types.InlineKeyboardButton('Общее', callback_data='dima storage'))
 
     tel_bol.send_message(call.message.chat.id, 'Выберите пункт', reply_markup=markup)
 
@@ -64,3 +63,4 @@ def show_dima_storage(tel_bot: TeleBot, call, cursor):
             break
         info += f"{str(row[0])}   {int(row[1])} шт \n"
     tel_bot.send_message(call.message.chat.id, info)
+
