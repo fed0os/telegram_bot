@@ -12,7 +12,6 @@ def connect_to_db(func):
         conn = pyodbc.connect(con_str)
         cursor = conn.cursor()
 
-        # Вызываем декорируемую функцию с соединением и курсором
         result = func(conn, cursor, *args, **kwargs)
 
         conn.close()
@@ -21,16 +20,3 @@ def connect_to_db(func):
 
     return wrapper
 
-# @connect_to_db
-# def my_function(conn, cursor):
-#     cursor.execute('SELECT * FROM Employees')
-#
-#
-#     while 1:
-#         rows = cursor.fetchone()
-#         if not rows:
-#             break
-#         print(rows[1])
-#
-# # Вызов функции
-# my_function()
