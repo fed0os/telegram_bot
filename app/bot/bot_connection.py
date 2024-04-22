@@ -1,7 +1,7 @@
 import telebot
 from telebot import TeleBot
 from app.db.db_connect import connect_to_db
-from employee_functions import show_employees_table, show_all_employee, show_employees_salary, put_products_on_storage
+from employee_functions import show_employees_table, show_all_employee, show_employees_salary
 from foundry_functions import show_foundry_table, show_no_processed_details
 from storage_functions import show_storage_table, show_our_storage, show_dima_storage
 

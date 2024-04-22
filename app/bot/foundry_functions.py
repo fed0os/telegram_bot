@@ -1,6 +1,8 @@
 import telebot
 from telebot import TeleBot
 
+from storage_functions import show_information
+
 def show_foundry_table(tel_bol: TeleBot, call):
     markup = telebot.types.InlineKeyboardMarkup()
     markup.add(telebot.types.InlineKeyboardButton('Деталей не обработанно', callback_data='No details processed'))
@@ -30,15 +32,7 @@ def show_no_processed_details(tel_bot: TeleBot, call, cursor):
                 join Products p on Foundry.ProductId = p.Id
                 """
 
-    cursor.execute(query)
-    info = ''
-    while True:
-        row = cursor.fetchone()
-        if not row:
-            break
-        info += f"{str(row[0])}   {int(row[1])} шт \n"
-    tel_bot.send_message(call.message.chat.id, info)
-
+    show_information(query, cursor, tel_bot, call)
 
 
 

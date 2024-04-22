@@ -1,6 +1,18 @@
 import telebot
 from telebot import TeleBot
 
+
+def show_information(query, cursor_info, bot: TeleBot, call):
+    cursor_info.execute(query)
+    info = ''
+    while True:
+        row = cursor_info.fetchone()
+        if not row:
+            break
+        info += f"{str(row[0])}   {int(row[1])} шт \n"
+    bot.send_message(call.message.chat.id, info)
+
+
 def show_storage_table(tel_bol: TeleBot, call):
     markup = telebot.types.InlineKeyboardMarkup()
     markup.add(telebot.types.InlineKeyboardButton('Наш склад', callback_data='our storage'))
@@ -8,8 +20,8 @@ def show_storage_table(tel_bol: TeleBot, call):
 
     tel_bol.send_message(call.message.chat.id, 'Выберите пункт', reply_markup=markup)
 
-def show_our_storage(tel_bot: TeleBot, call, cursor):
 
+def show_our_storage(tel_bot: TeleBot, call, cursor):
     query = """SELECT 
                 p.Name AS ProductName,
                 COALESCE(pp.TotalAmount, 0) - COALESCE(dw.TotalAmount, 0) - COALESCE(s.Amount, 0) AS Difference
@@ -31,18 +43,10 @@ def show_our_storage(tel_bot: TeleBot, call, cursor):
                 GROUP BY ProductId
             ) s ON p.Id = s.ProductId;"""
 
-    cursor.execute(query)
-    info = ''
-    while True:
-        row = cursor.fetchone()
-        if not row:
-            break
-        info += f"{str(row[0])}   {int(row[1])} шт \n"
-    tel_bot.send_message(call.message.chat.id, info)
+    show_information(query, cursor, tel_bot, call)
 
 
 def show_dima_storage(tel_bot: TeleBot, call, cursor):
-
     query = """SELECT 
                 p.Name, 
                 SUM(dw.Amount) - COALESCE(SUM(s.Amount), 0) AS total_amount
@@ -55,12 +59,4 @@ def show_dima_storage(tel_bot: TeleBot, call, cursor):
             GROUP BY 
                 p.Name;"""
 
-    cursor.execute(query)
-    info = ''
-    while True:
-        row = cursor.fetchone()
-        if not row:
-            break
-        info += f"{str(row[0])}   {int(row[1])} шт \n"
-    tel_bot.send_message(call.message.chat.id, info)
-
+    show_information(query, cursor, tel_bot, call)
