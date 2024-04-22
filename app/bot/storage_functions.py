@@ -49,29 +49,35 @@ def show_our_storage(tel_bot: TeleBot, call, cursor):
 
 
 def show_dima_storage(tel_bot: TeleBot, call, cursor):
-    query = """SELECT 
-                p.Name, 
-                SUM(dw.Amount) - COALESCE(SUM(s.Amount), 0) AS total_amount
-            FROM 
-                Dima_warehouse dw
-            JOIN 
-                Products p ON dw.ProductId = p.Id
-            LEFT JOIN 
-                Sales s ON dw.ProductId = s.ProductId and s.CustomerId = 4
-            GROUP BY 
-                p.Name
-                ORDER BY 
-                CASE p.Name
-                    WHEN 'ММ' THEN 1
-                    WHEN 'МБ' THEN 2
-                    WHEN 'М КР' THEN 3
-                    WHEN 'МБН' THEN 4
-                    WHEN 'П' THEN 5
-                    WHEN 'В' THEN 6
-                    WHEN 'ЧН' THEN 7
-                    WHEN 'ЧОР' THEN 8
-                    WHEN 'ЧНБ' THEN 9
-                    ELSE 10
-                END"""
+    query = """WITH WarehouseTotal AS (
+                    SELECT 
+                        ProductId,
+                        SUM(Amount) AS WarehouseAmount
+                    FROM 
+                        Dima_warehouse
+                    GROUP BY 
+                        ProductId
+                ),
+                SalesTotal AS (
+                    SELECT 
+                        ProductId,
+                        SUM(Amount) AS SalesAmount
+                    FROM 
+                        Sales
+                    WHERE 
+                        CustomerId = 18
+                    GROUP BY 
+                        ProductId
+                )
+                SELECT 
+                    p.Name,
+                    COALESCE(w.WarehouseAmount, 0) - COALESCE(s.SalesAmount, 0) AS Difference
+                FROM 
+                    WarehouseTotal w
+                LEFT JOIN 
+                    SalesTotal s ON w.ProductId = s.ProductId
+                    inner join Products p on w.ProductId = p.Id
+
+                """
 
     show_information(query, cursor, tel_bot, call)
