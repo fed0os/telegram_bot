@@ -2,7 +2,7 @@ import telebot
 from telebot import TeleBot
 from app.db.db_connect import connect_to_db
 from employee_functions import show_employees_table, show_all_employee, show_employees_salary
-from foundry_functions import show_foundry_table, show_no_processed_details
+from foundry_functions import show_foundry_table, show_no_processed_details, add_product, callback_handler
 from storage_functions import show_storage_table, show_our_storage, show_dima_storage
 from aluminium import show_aluminium_residue, show_aluminium_table
 
@@ -42,7 +42,10 @@ def my_callback(conn, cursor, call):
     elif call.data == 'No details processed':
         show_no_processed_details(bot, call, cursor)
     elif call.data == 'Add details':
-        bot.send_message(call.message.chat.id, 'Позже будет возможность добавить детали')
+        add_product(bot, call, cursor)
+
+
+
 
     if call.data == 'storage':
         show_storage_table(bot, call)

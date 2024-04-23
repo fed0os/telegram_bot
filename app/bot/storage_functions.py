@@ -24,26 +24,44 @@ def show_storage_table(tel_bol: TeleBot, call):
 
 
 def show_our_storage(tel_bot: TeleBot, call, cursor):
-    query = """SELECT 
-                p.Name AS ProductName,
-                COALESCE(pp.TotalAmount, 0) - COALESCE(dw.TotalAmount, 0) - COALESCE(s.Amount, 0) AS Difference
-            FROM (
-                SELECT ProductId, SUM(Amount) AS TotalAmount
-                FROM Dima_warehouse
-                GROUP BY ProductId
-            ) dw
-            LEFT JOIN (
-                SELECT ProductId, SUM(Amount) AS TotalAmount
-                FROM Processed_product
-                GROUP BY ProductId
-            ) pp ON dw.ProductId = pp.ProductId
-            JOIN Products p ON dw.ProductId = p.Id
-            LEFT JOIN (
-                SELECT ProductId, SUM(Amount) AS Amount
-                FROM Sales
-                WHERE CustomerId != 4
-                GROUP BY ProductId
-            ) s ON p.Id = s.ProductId;"""
+    query = """WITH WarehouseTotal AS (
+                    SELECT 
+                        ProductId,
+                        SUM(Amount) AS WarehouseAmount
+                    FROM 
+                        Processed_product
+                    GROUP BY 
+                        ProductId
+                ),
+                SalesTotal AS (
+                    SELECT 
+                        ProductId,
+                        SUM(Amount) AS SalesAmount
+                    FROM 
+                        Sales
+                    WHERE 
+                        CustomerId <> 18
+                    GROUP BY 
+                        ProductId
+                )
+                SELECT 
+                    p.Name,
+                    COALESCE(w.WarehouseAmount, 0) - COALESCE(s.SalesAmount, 0) - COALESCE(dw.Dima_sale_amount, 0) AS Difference
+                FROM 
+                    WarehouseTotal w
+                LEFT JOIN 
+                    SalesTotal s ON w.ProductId = s.ProductId
+                LEFT JOIN 
+                    (SELECT 
+                         ProductId,
+                         SUM(Amount) AS Dima_sale_amount
+                     FROM 
+                         Dima_warehouse
+                     GROUP BY 
+                         ProductId) dw ON w.ProductId = dw.ProductId
+                INNER JOIN 
+                    Products p ON w.ProductId = p.Id;
+                """
 
     show_information(query, cursor, tel_bot, call)
 
