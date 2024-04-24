@@ -1,0 +1,9 @@
+2024-04-24 23:02:00,671 - __main__ - INFO - User 124256749 started the bot
+2024-04-24 23:02:02,280 - __main__ - INFO - User 124256749 requested to see foundry table
+2024-04-24 23:02:11,624 - __main__ - INFO - User 124256749 requested to see aluminium table
+2024-04-24 23:02:14,611 - __main__ - INFO - User 124256749 requested to see aluminium residue
+2024-04-24 23:02:18,009 - __main__ - INFO - User 124256749 requested to see storage table
+2024-04-24 23:02:20,499 - __main__ - INFO - User 124256749 requested to see our storage
+2024-04-24 23:02:22,076 - __main__ - INFO - User 124256749 requested to see dima storage
+2024-04-24 23:02:30,966 - TeleBot - ERROR - Infinity polling: polling exited
+2024-04-24 23:02:30,966 - TeleBot - ERROR - Break infinity polling
