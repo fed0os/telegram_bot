@@ -2,9 +2,8 @@ import pyodbc
 
 from telebot import types
 
-
 product_id = ''
-employee_id = ''
+customer_id = ''
 amount = ''
 
 
@@ -18,7 +17,8 @@ def add_process_product(chat_id, cursor, bot):
     msg = bot.send_message(chat_id, 'Выберите товар', reply_markup=markup)
     bot.register_next_step_handler(msg, lambda message: handle_product(message, cursor, bot))
 
-def handle_product(message, cursor,bot):
+
+def handle_product(message, cursor, bot):
     global product_id
 
     con_str = ';'.join(['DRIVER={SQL Server}', 'SERVER=WIN-IUA2D70C19F\MSSQLSERVER01', 'DATABASE=LEDA'])
@@ -46,7 +46,7 @@ def handle_product(message, cursor,bot):
 
 
 def handle_employee(message, bot):
-    global employee_id
+    global customer_id
 
     con_str = ';'.join(['DRIVER={SQL Server}', 'SERVER=WIN-IUA2D70C19F\MSSQLSERVER01', 'DATABASE=LEDA'])
     conn = pyodbc.connect(con_str)
@@ -74,7 +74,8 @@ def handle_amount_and_add(message, bot):
     cursor = conn.cursor()
 
     try:
-        cursor.execute(f"INSERT INTO Processed_product (EmployeeId, ProductId, Amount) VALUES ('{employee_id}', '{product_id}', '{amount}')")
+        cursor.execute(
+            f"INSERT INTO Processed_product (EmployeeId, ProductId, Amount) VALUES ('{customer_id}', '{product_id}', '{amount}')")
 
         conn.commit()  # Commit the transaction
 
@@ -86,4 +87,4 @@ def handle_amount_and_add(message, bot):
     finally:
         conn.close()
 
-    print(product_id, employee_id, amount)
+    print(product_id, customer_id, amount)
